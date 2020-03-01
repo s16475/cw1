@@ -10,22 +10,23 @@ namespace ConsoleApp1
     {
         static async Task Main(string[] args)
         {
-            try
+            if (args.Length == 0)
+            {
+                throw new ArgumentNullException("No argument!");
+            }
+            else
             {
                 var emails = await GetEmails(args[0]);
+
                 foreach (var a in args)
                 {
                     Console.WriteLine(a);
                 }
-
                 foreach (var email in emails)
                 {
                     Console.WriteLine(email);
                 }
-            } catch (ArgumentNullException e)
-            {
-                Console.WriteLine("No argument:" + e); 
-            }
+            }        
         }
 
         static async Task<IList<string>> GetEmails(string url)
@@ -33,18 +34,26 @@ namespace ConsoleApp1
             var httpclient = new HttpClient();
             var listOfEmails = new List<string>();
             var response = await httpclient.GetAsync(url);
+            // podczas pobierania wystapil blad
 
             Regex emailRegex = new Regex(@"\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*",
             RegexOptions.IgnoreCase);
             //find items that matches with our pattern
             MatchCollection emailMatches = emailRegex.Matches(response.Content.ReadAsStringAsync().Result);
-            
+
+            response.Dispose();
             foreach (var emailMatch in emailMatches)
             {
                 listOfEmails.Add(emailMatch.ToString());
             }
 
+            if (listOfEmails.Count == 0)
+            {
+                Console.WriteLine("Brak adresów email");
+            }
+            
             return listOfEmails;
+
         }
 
     }
