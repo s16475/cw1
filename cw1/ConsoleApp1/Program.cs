@@ -10,15 +10,21 @@ namespace ConsoleApp1
     {
         static async Task Main(string[] args)
         {
-            var emails = await GetEmails(args[0]);
-            foreach (var a in args)
+            try
             {
-                Console.WriteLine(a);
-            }
+                var emails = await GetEmails(args[0]);
+                foreach (var a in args)
+                {
+                    Console.WriteLine(a);
+                }
 
-            foreach(var email in emails)
+                foreach (var email in emails)
+                {
+                    Console.WriteLine(email);
+                }
+            } catch (ArgumentNullException e)
             {
-                Console.WriteLine(email);
+                Console.WriteLine("No argument:" + e); 
             }
         }
 
